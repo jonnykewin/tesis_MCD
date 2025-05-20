@@ -11,7 +11,7 @@ for folder_name in os.listdir(path):
     folder_path = os.path.join(path,folder_name)
     if os.path.isdir(folder_path):
         for file_name in os.listdir(folder_path):
-            list_sr = ["SR_B1.TIF","SR_B2.TIF","SR_B3.TIF","SR_B4.TIF","SR_B5.TIF","SR_B6.TIF","SR_B7.TIF","B8.TIF"]
+            list_sr = ["SR_B2.TIF","SR_B3.TIF","SR_B4.TIF","SR_B5.TIF","SR_B6.TIF","SR_B7.TIF","B8.TIF"]
             for sr in list_sr:
                 if file_name.endswith(sr):
                     temp_file = os.path.join(folder_path,file_name)
