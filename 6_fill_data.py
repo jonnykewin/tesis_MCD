@@ -33,11 +33,11 @@ for folder_name in os.listdir(path):
                     'npmin':600,
                     'segmax':300,
                     'lambda':None,
-                    'output':'TEMPORARY_OUTPUT',
+                    'output':second_output,
                     'GRASS_REGION_PARAMETER':None,
                     'GRASS_REGION_CELLSIZE_PARAMETER':0,
                     'GRASS_RASTER_FORMAT_OPT':'',
                     'GRASS_RASTER_FORMAT_META':''})
-
+                    
                     os.remove(temp_file)
                     print(f"Procesado: {first_output}")
