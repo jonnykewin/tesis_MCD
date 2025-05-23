@@ -6,7 +6,7 @@ import math
 path = 'C:/Users/Admin/Documents/MAESTRIA/TESIS/4-scale_bands_sr_st/santa_marta'
 
 formula_sr = f"((0.0000275*A)-0.2)"
-formula_st = f"((0.00341802*A)+149)"
+formula_st = f"((0.00341802*A)+149)" #https://www.usgs.gov/landsat-missions/landsat-collection-2-surface-temperature se convierte a LST
 
 for folder_name in os.listdir(path):
     folder_path = os.path.join(path,folder_name)

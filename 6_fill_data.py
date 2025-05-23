@@ -1,7 +1,26 @@
 import os
-import processing
+os.environ['PROJ_LIB'] = '/Applications/QGIS-LTR.app/Contents/Resources/proj'
+os.environ['GDAL_DATA'] = '/Applications/QGIS-LTR.app/Contents/Resources/gdal'
 
-path = 'C:/Users/jonny/Documentos/MAESTRIA/TESIS/7-clean_outliers_2/santa_marta'
+import sys
+sys.path.append('/Applications/QGIS-LTR.app/Contents/Resources/python')
+sys.path.append('/Applications/QGIS-LTR.app/Contents/Resources/python/plugins')
+
+from qgis.core import QgsApplication
+QgsApplication.setPrefixPath("/Applications/QGIS-LTR.app/Contents/MacOS", True)
+qgs = QgsApplication([], False)
+qgs.initQgis()
+
+import processing
+from processing.core.Processing import Processing
+Processing.initialize()
+
+from qgis.analysis import QgsNativeAlgorithms
+provider = QgsNativeAlgorithms()
+if not any(p.name() == provider.name() for p in QgsApplication.processingRegistry().providers()):
+    QgsApplication.processingRegistry().addProvider(provider)
+
+path = '/Users/jonny.sanchez/Documents/tesis/6-fill_data/santa_marta'
 
 for folder_name in os.listdir(path):
     folder_path = os.path.join(path,folder_name)
@@ -11,9 +30,9 @@ for folder_name in os.listdir(path):
             for sr in list_sr:
                 if file_name.endswith(sr):
                     temp_file = os.path.join(folder_path,file_name)
-                    first_output = os.path.join(folder_path, f"FNGDAL_{file_name}")
-                    second_output = os.path.join(folder_path, f"FNGRASS_{file_name}")
-
+                    #first_output = os.path.join(folder_path, f"FNGDAL_{file_name}")
+                    second_output = os.path.join(folder_path, f"FN_{file_name}")
+                    '''
                     processing.run("gdal:fillnodata", {
                     'INPUT':temp_file,
                     'BAND':1,
@@ -23,7 +42,7 @@ for folder_name in os.listdir(path):
                     'OPTIONS':None,
                     'EXTRA':'',
                     'OUTPUT':first_output})
-                    
+                    '''
                     processing.run("grass:r.fillnulls", {
                     'input':temp_file,
                     'method':1,
@@ -40,4 +59,6 @@ for folder_name in os.listdir(path):
                     'GRASS_RASTER_FORMAT_META':''})
                     
                     os.remove(temp_file)
-                    print(f"Procesado: {first_output}")
+                    print(f"Procesado: {second_output}")
+
+qgs.exitQgis()
