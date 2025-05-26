@@ -105,7 +105,7 @@ for folder_name in os.listdir(path):
         print(f"Procesado: {ndbi}")
         
         processing.run("gdal:rastercalculator", {
-                        'INPUT_A':b6_file,
+                        'INPUT_A':b5_file,
                         'BAND_A':1,
                         'INPUT_B':b3_file,
                         'BAND_B':1,
