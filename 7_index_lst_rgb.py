@@ -1,13 +1,13 @@
 import os
-os.environ['PROJ_LIB'] = '/Applications/QGIS-LTR.app/Contents/Resources/proj'
-os.environ['GDAL_DATA'] = '/Applications/QGIS-LTR.app/Contents/Resources/gdal'
+os.environ['PROJ_LIB'] = '/Applications/QGIS.app/Contents/Resources/proj'
+os.environ['GDAL_DATA'] = '/Applications/QGIS.app/Contents/Resources/gdal'
 
 import sys
-sys.path.append('/Applications/QGIS-LTR.app/Contents/Resources/python')
-sys.path.append('/Applications/QGIS-LTR.app/Contents/Resources/python/plugins')
+sys.path.append('/Applications/QGIS.app/Contents/Resources/python')
+sys.path.append('/Applications/QGIS.app/Contents/Resources/python/plugins')
 
 from qgis.core import QgsApplication
-QgsApplication.setPrefixPath("/Applications/QGIS-LTR.app/Contents/MacOS", True)
+QgsApplication.setPrefixPath("/Applications/QGIS.app/Contents/MacOS", True)
 qgs = QgsApplication([], False)
 qgs.initQgis()
 
@@ -20,7 +20,7 @@ provider = QgsNativeAlgorithms()
 if not any(p.name() == provider.name() for p in QgsApplication.processingRegistry().providers()):
     QgsApplication.processingRegistry().addProvider(provider)
 
-path = '/Users/jonny.sanchez/Documents/tesis/7-index_lst_rgb/cartagena'
+path = '/Users/jonny.sanchez/Documents/tesis/7-index_lst_rgb/santa_marta'
 
 for folder_name in os.listdir(path):
     folder_path = os.path.join(path,folder_name)
@@ -54,7 +54,7 @@ for folder_name in os.listdir(path):
         rgb_pan = os.path.join(folder_path, "RGB_pansharp.TIF")
 
         formula = f"((B-A)/(B+A))"
-        formula_lst = f"(A) - 273.15" #https://www.usgs.gov/landsat-missions/landsat-collection-2-surface-temperature ya los datos se encontraban en LST en Kelvin se convierte a C
+        formula_lst = f"(A - 273.15)" #https://www.usgs.gov/landsat-missions/landsat-collection-2-surface-temperature ya los datos se encontraban en LST en Kelvin se convierte a C
 
         processing.run("gdal:rastercalculator", {
                         'INPUT_A':b4_file,

@@ -1,13 +1,13 @@
 import os
-os.environ['PROJ_LIB'] = '/Applications/QGIS-LTR.app/Contents/Resources/proj'
-os.environ['GDAL_DATA'] = '/Applications/QGIS-LTR.app/Contents/Resources/gdal'
+os.environ['PROJ_LIB'] = '/Applications/QGIS.app/Contents/Resources/proj'
+os.environ['GDAL_DATA'] = '/Applications/QGIS.app/Contents/Resources/gdal'
 
 import sys
-sys.path.append('/Applications/QGIS-LTR.app/Contents/Resources/python')
-sys.path.append('/Applications/QGIS-LTR.app/Contents/Resources/python/plugins')
+sys.path.append('/Applications/QGIS.app/Contents/Resources/python')
+sys.path.append('/Applications/QGIS.app/Contents/Resources/python/plugins')
 
 from qgis.core import QgsApplication
-QgsApplication.setPrefixPath("/Applications/QGIS-LTR.app/Contents/MacOS", True)
+QgsApplication.setPrefixPath("/Applications/QGIS.app/Contents/MacOS", True)
 qgs = QgsApplication([], False)
 qgs.initQgis()
 
@@ -26,7 +26,7 @@ for folder_name in os.listdir(path):
     folder_path = os.path.join(path,folder_name)
     if os.path.isdir(folder_path):
         for file_name in os.listdir(folder_path):
-            list_sr = ["SR_B2.TIF","SR_B3.TIF","SR_B4.TIF","SR_B5.TIF","SR_B6.TIF","SR_B7.TIF","B8.TIF"]
+            list_sr = ["SR_B2.TIF","SR_B3.TIF","SR_B4.TIF","SR_B5.TIF","SR_B6.TIF","SR_B7.TIF","B8.TIF","ST_EMIS.TIF"]
             for sr in list_sr:
                 if file_name.endswith(sr):
                     temp_file = os.path.join(folder_path,file_name)

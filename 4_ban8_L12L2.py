@@ -1,9 +1,29 @@
 import os
-import json
+os.environ['PROJ_LIB'] = '/Applications/QGIS.app/Contents/Resources/proj'
+os.environ['GDAL_DATA'] = '/Applications/QGIS.app/Contents/Resources/gdal'
+
+import sys
+sys.path.append('/Applications/QGIS.app/Contents/Resources/python')
+sys.path.append('/Applications/QGIS.app/Contents/Resources/python/plugins')
+
+from qgis.core import QgsApplication
+QgsApplication.setPrefixPath("/Applications/QGIS.app/Contents/MacOS", True)
+qgs = QgsApplication([], False)
+qgs.initQgis()
+
 import processing
+from processing.core.Processing import Processing
+Processing.initialize()
+
+from qgis.analysis import QgsNativeAlgorithms
+provider = QgsNativeAlgorithms()
+if not any(p.name() == provider.name() for p in QgsApplication.processingRegistry().providers()):
+    QgsApplication.processingRegistry().addProvider(provider)
+
+import json
 import math
 
-path = 'C:/Users/Admin/Documents/MAESTRIA/TESIS/5-b8_sr/santa_marta'
+path = '/Users/jonny.sanchez/Documents/tesis/4-b8_sr/santa_marta'
 
 for folder_name in os.listdir(path):
     folder_path = os.path.join(path,folder_name)
@@ -54,3 +74,5 @@ for folder_name in os.listdir(path):
                         
         os.remove(temp_file)
         print(f"Procesado: {temp_file}")
+
+qgs.exitQgis()
