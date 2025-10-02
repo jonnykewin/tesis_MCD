@@ -20,7 +20,7 @@ provider = QgsNativeAlgorithms()
 if not any(p.name() == provider.name() for p in QgsApplication.processingRegistry().providers()):
     QgsApplication.processingRegistry().addProvider(provider)
 
-path = '/Users/jonny.sanchez/Documents/tesis/9-cover_density/santa_marta'
+path = '/Users/jonny.sanchez/Documents/tesis/9-cover_density/barranquilla'
 
 for folder_name in os.listdir(path):
     folder_path = os.path.join(path,folder_name)
