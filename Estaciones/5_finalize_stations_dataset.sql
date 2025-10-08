@@ -51,6 +51,9 @@ from estaciones_meteorologicas_final_barranquilla_2022
 union 
 select *
 from estaciones_meteorologicas_final_barranquilla_2023
+union
+select *
+from estaciones_meteorologicas_final_barranquilla_2024
 union 
 select *
 from estaciones_meteorologicas_final_cartagena_2015
@@ -66,6 +69,21 @@ from estaciones_meteorologicas_final_cartagena_2018
 union 
 select *
 from estaciones_meteorologicas_final_cartagena_2019
+union 
+select *
+from estaciones_meteorologicas_final_cartagena_2020
+union 
+select *
+from estaciones_meteorologicas_final_cartagena_2021
+union 
+select *
+from estaciones_meteorologicas_final_cartagena_2022
+union 
+select *
+from estaciones_meteorologicas_final_cartagena_2023
+union 
+select *
+from estaciones_meteorologicas_final_cartagena_2024
 union 
 select *
 from estaciones_meteorologicas_final_santa_marta_2015
@@ -95,7 +113,7 @@ select *
 from estaciones_meteorologicas_final_santa_marta_2023
 union 
 select *
-from estaciones_meteorologicas_final_santa_marta_2024)
+from estaciones_meteorologicas_final_santa_marta_2024);
 
 
 -- =========================================================
@@ -144,3 +162,81 @@ SELECT *
 FROM ranked
 WHERE rn = 1
 ORDER BY fuente, ciudad, codigo_estacion, fecha_dia;
+
+
+--===============================================
+-- 4) Limpieza: eliminar registros sin ningún valor raster
+--===============================================
+delete from estaciones_final ef 
+where ef.lst is null or
+ef.sea_water is null or
+ef.fresh_water is null or
+ef.builds is null or
+ef.clouds is null or
+ef.bare_ground is null or
+ef.veg is null or
+ef.ndbi is null or
+ef.ndwi is null or
+ef.ndvi is null or
+ef.st_emissivity is null;
+
+
+--Cuando la diferencia entre la medición y el LST es mayor a 25
+delete 
+from estaciones_final as ef
+where abs(ef.lst::numeric -ef.medicion::numeric) > 25;
+
+--===============================================
+-- 4) Dataset: Final para entrada del modelo
+--===============================================
+create table estaciones_nuevas.estaciones_estudio as
+select 
+	ef.fuente,
+	ef.ciudad,
+	ef.codigo_estacion,
+	ef.fecha_toma,
+	extract (year from ef.fecha_toma) as anio,
+	extract (month from ef.fecha_toma) as mes,
+	extract (day from ef.fecha_toma) as dia,
+	round(ef.medicion::numeric,3) medicion,
+	ef.sea_water,
+	ef.fresh_water,
+	ef.builds,
+	ef.clouds,
+	ef.bare_ground,
+	ef.veg,
+	ef.lst,
+	ef.ndbi,
+	ef.ndvi,
+	ef.ndwi,
+	ef.st_emissivity,
+	round(st_y(ST_Transform(ef.geometry,9377))::numeric,4) as norte,
+	round(st_x(ST_Transform(ef.geometry,9377))::numeric,4) as este
+from estaciones_nuevas.estaciones_final ef ;
+
+
+create table estaciones_nuevas.estaciones_estudio_geo as
+select 
+	ef.fuente,
+	ef.ciudad,
+	ef.codigo_estacion,
+	ef.fecha_toma,
+	extract (year from ef.fecha_toma) as anio,
+	extract (month from ef.fecha_toma) as mes,
+	extract (day from ef.fecha_toma) as dia,
+	round(ef.medicion::numeric,3) medicion,
+	ef.sea_water,
+	ef.fresh_water,
+	ef.builds,
+	ef.clouds,
+	ef.bare_ground,
+	ef.veg,
+	ef.lst,
+	ef.ndbi,
+	ef.ndvi,
+	ef.ndwi,
+	ef.st_emissivity,
+	round(st_y(ST_Transform(ef.geometry,9377))::numeric,4) as norte,
+	round(st_x(ST_Transform(ef.geometry,9377))::numeric,4) as este,
+	ST_Transform(ef.geometry,9377) as geom
+from estaciones_nuevas.estaciones_final ef ;
