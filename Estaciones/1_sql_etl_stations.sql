@@ -16,7 +16,7 @@ select
 	(db.fecha||' '||db.hora) ::timestamp as fecha_toma,
 	db.codigo_estacion codigo_estacion,
 	replace(db.temperatura, ',', '.')::numeric as medicion,
-	ST_SetSRID(ST_MakePoint(replace(db.long, ',', '.')::numeric  , replace(db.lat, ',', '.')::numeric ), 4326) as numeric
+	ST_SetSRID(ST_MakePoint(replace(db.long, ',', '.')::numeric  , replace(db.lat, ',', '.')::numeric ), 4326) as geometria
 from estaciones.dimar_barranquilla db 
 union
 select 
@@ -25,7 +25,7 @@ select
 	(db.fecha||' '||db.hora) ::timestamp as fecha_toma,
 	db.codigo_estacion codigo_estacion,
 	replace(db.temperatura, ',', '.')::numeric as medicion,
-	ST_SetSRID(ST_MakePoint(replace(db.long, ',', '.')::numeric  , replace(db.lat, ',', '.')::numeric ), 4326) as numeric
+	ST_SetSRID(ST_MakePoint(replace(db.long, ',', '.')::numeric  , replace(db.lat, ',', '.')::numeric ), 4326) as geometria
 from estaciones.dimar_santa_marta db 
 
 --Limpieza de valores atipicios de mediciones estaciones DIMAR
@@ -56,6 +56,40 @@ where id."FechaObservacion" :: date in (
   DATE '2024-01-20'
 );
 
+--=====================================================
+--Consolidación estaciones ERA5 LAND
+--=====================================================
+create table estaciones.estaciones_era5 as 
+select 
+	'era5_land' as fuente,
+	case 
+		when el.ciudad like 'santa marta' then 'santa_marta'
+		else el.ciudad
+	end as ciudad,
+	(el.date||' '||'10:00:00.000') ::timestamp as fecha_toma,
+	el.codigo_estacion as codigo_estacion,
+	el."first" ::numeric as medicion,
+	ST_SetSRID(ST_MakePoint(el.lon ::numeric ,el.lat ::numeric),4326) as geometria
+from estaciones.era5land el 
+where el."first" != '';
+
+--=====================================================
+--Consolidación estacion ERA5 hourly
+--=====================================================
+create table estaciones.estaciones_era5_hourly as 
+select 
+	'era5_hourly' as fuente,
+	case 
+		when erm.ciudad like 'santa marta' then 'santa_marta'
+		else erm.ciudad
+	end as ciudad,
+	(erm.date||' '||'10:00:00.000') ::timestamp as fecha_toma,
+	erm.codigo_estacion as codigo_estacion,
+	erm."first" ::numeric as medicion,
+	ST_SetSRID(ST_MakePoint(erm.lon ::numeric ,erm.lat ::numeric),4326) as geometria
+from estaciones.eramar erm
+where erm."first" != '';
+
 
 --=======================================================
 --Creación del dataset final de estaciones consolidadas
@@ -63,4 +97,13 @@ where id."FechaObservacion" :: date in (
 create table estaciones.estaciones_consolidadas as 
 select * from estaciones.estaciones_dimar ed 
 union
-select * from estaciones.estaciones_ideam id;
+select * from estaciones.estaciones_ideam id
+union
+select * from estaciones.estaciones_era5
+union 
+select * from estaciones.estaciones_era5_hourly;
+
+
+update  estaciones.estaciones_consolidadas set
+ciudad = 'santa_marta'
+where ciudad = 'santa marta';
