@@ -1,0 +1,14 @@
+{
+  "Cartagena": {
+    "vmin": 29.0,
+    "vmax": 33.0
+  },
+  "Barranquilla": {
+    "vmin": 25.5,
+    "vmax": 29.0
+  },
+  "Santa Marta": {
+    "vmin": 23.5,
+    "vmax": 30.5
+  }
+}
