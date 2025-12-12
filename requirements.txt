@@ -1,0 +1,15 @@
+numpy
+pandas
+rasterio
+rioxarray
+xarray
+geopandas
+shapely
+scikit-learn
+matplotlib
+seaborn
+rasterstats
+scikit-image
+jupyter
+tqdm
+ipykernel
